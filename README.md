@@ -1,4 +1,4 @@
-# cis-680-final-project
+# Counting Objects in Cluttered Environments
 
 This project has been implemented as a requirement for the Final Project for the Fall 2021 iteration of the CIS-680 course at the University of Pennsylvania.
 
