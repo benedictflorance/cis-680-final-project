@@ -2,6 +2,8 @@
 
 This project has been implemented as a requirement for the Final Project for the Fall 2021 iteration of the CIS-680 course at the University of Pennsylvania.
 
+We implement a model to count machine parts bunched up together in a cluttered image.
+
 ## Installation
 
 ```
