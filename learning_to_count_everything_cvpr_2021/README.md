@@ -1,68 +1,19 @@
-# Learning To Count Everything
-![image](learn2countEverything.png)
+# Learning To Count Everything (CVPR 2021)
 
-This is the official implementation of the following CVPR 2021 paper:
+## Method
+- Due to large variation in object size: generate the target density map using Gaussian smoothing with adaptive window size.
+- First, we use dot annotations to estimate the size of the objects. 
+- Given the dot annotation map, where each dot is at an approximate center of an object, we compute the distance between each dot and its nearest neighbor, and average these distances for all the dots in the image. In the paper they have dot annotations for images, in machine-parts dataset we take COM of the polygon masks
+- This average distance is used as the size of the Gaussian window to generate the target density map. The standard deviation of the Gaussian is set to be a quarter of the window size
+- We follow a similar training methodology as outlined in the paper for our train-val-test split of 80-10-10 (6480-810-810)
 
-```
-Learning To Count Everything
-Viresh Ranjan, Udbhav Sharma, Thu Nguyen and Minh Hoai
-Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2021.
-```
-Link to arxiv preprint: https://arxiv.org/pdf/2104.08391.pdf
+## Quick Start
 
-Short presentation video
-
-[![Short Presentation](https://img.youtube.com/vi/kdpNq5V2NuA/hqdefault.jpg)](https://youtu.be/kdpNq5V2NuA)
-## Dataset download 
-Images can be downloaded from here: https://drive.google.com/file/d/1ymDYrGs9DSRicfZbSCDiOu0ikGDh5k6S/view?usp=sharing
-
-Precomputed density maps can be found here: https://archive.org/details/FSC147-GT
-
-Place the unzipped image directory and density map directory inside the data directory.
-
-## Installation with Conda
-
-conda create -n fscount python=3.7 -y
-
-conda activate fscount
-
-python -m pip install matplotlib opencv-python notebook tqdm
-
-conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit=10.0 -c pytorch
-
-
-## Quick demo
-
-Provide the input image and also provide the bounding boxes of exemplar objects using a text file:
-
-``` bash
-python demo.py --input-image orange.jpg --bbox-file orange_box_ex.txt 
-```
-
-Use our provided interface to specify the bounding boxes for exemplar objects
-
-
-``` bash
-python demo.py --input-image orange.jpg
-```
-
-
-## Evaluation
-We are providing our pretrained FamNet model, and the evaluation code can be used without the training.
-### Testing on validation split without adaptation
-```bash 
-python test.py --data_path /PATH/TO/YOUR/FSC147/DATASET/ --test_split val
-```
-### Testing on val split with adaptation
-```bash 
-python test.py --data_path /PATH/TO/YOUR/FSC147/DATASET/ --test_split val --adapt
-```
-
-
-## Training 
-``` bash
-python train.py --gpu 0
-```
+- Run the quickstart tutorial in the `680_Final_Project.ipynb` to run the code.
+- Dataset can be found [here](https://drive.google.com/drive/folders/1OyWLO9ysCCZkGnQdwYhIKbU0ixk_73Zj?usp=sharing)
+- Scaled dataset can be found [here](https://drive.google.com/drive/folders/1Cus6rW-Rqy2a62qYSL3Pf0DBI4dheGt-?usp=sharing)
+- Groundtruth density maps can be found [here](https://drive.google.com/drive/folders/1sC1HYSp8ntKigpAHjMAZZxldXB9YedZT?usp=sharing)
+- Our trained model can be found at pretrained/
 
 ## Citation
 
@@ -75,5 +26,4 @@ If you find the code useful, please cite:
   booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer Vision and Pattern Recognition (CVPR)},
 }
 ```
-
 
