@@ -1,6 +1,6 @@
 # Depth Estimation using Vision Transformers for Dense Prediction
 
-Since the given dataset consists of cluttered objects, we decided to explore the method of Depth Estimation to better estimate the approximate position of an object in the image.\
+Since the given dataset consists of cluttered objects, we decided to explore the method of Depth Estimation to better estimate the approximate position of an object in the image.
 
 ## Method
 [Vision Transformers for Dense Prediction](https://github.com/isl-org/DPT).
