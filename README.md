@@ -7,8 +7,8 @@ We implement a model to count machine parts bunched up together in a cluttered i
 ## Installation
 
 ```
-git clone placeholder.git
-cd placeholder
+git clone https://github.com/benedictflorance/cis-680-final-project
+cd cis-680-final-project
 pip install -r requirements.txt
 ```
 
@@ -37,20 +37,7 @@ python test.py
 ### Pre-trained Models
 
 You can download the pre-trained models [here](https://drive.google.com/drive/folders/1jIr8dkvefrQmv737fFm2isiT6tqpbTbv).
-```
-├── root 
-│   ├── dir0
-│   ├── dir1
-│   ├── dir2
-```
 
-### Reproducibility 
-
-Tests that ensure the results of all functions and training loop match the official implentation are contained in a different branch `reproduce`. One can check it out and run the tests:
-```
-git checkout reproduce
-py.test
-```
 
 ## Method
 
