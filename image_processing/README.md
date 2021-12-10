@@ -1,4 +1,4 @@
-# Image Processing pipeline to count Machine Washer parts
+# Image Processing Pipeline to Count Machine Washer Parts
 
 ## Method
 
