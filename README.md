@@ -12,19 +12,6 @@ cd placeholder
 pip install -r requirements.txt
 ```
 
-<details>
-  <summary> Dependencies (click to expand) </summary>
-  
-  ## Dependencies
-  - PyTorch 1.4
-  - matplotlib
-  - numpy
-  - imageio
-  - imageio-ffmpeg
-  - configargparse
-  
-</details>
-
 ## How To Run?
 
 ### Quick Start
