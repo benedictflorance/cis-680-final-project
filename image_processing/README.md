@@ -17,7 +17,7 @@ They use the following steps to obtain the circular object count:
 
 Since no official implementation of the method was provided, we have written our own code to replicate their experiment in our scenario.
 
-### Quick Start
+## Quick Start
 
 Instructions for running the whole pipeline are given in the .ipynb notebook itself.
 
