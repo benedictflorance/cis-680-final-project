@@ -6,7 +6,12 @@
  
 Since the authors of the above method had not provided any official implementations, we have written our own code to replicate their experiment in our scenario.
 
-<img src='imgs/pipeline.jpg'/>
+### Quick Start
+
+Instructions for running the whole pipeline are given in the .ipynb notebook itself.
+
+---
+
 
 
 ## Citation
