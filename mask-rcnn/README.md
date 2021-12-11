@@ -8,13 +8,9 @@
 - We follow a similar training methodology as outlined in the paper for our train-val-test split of 80-10-10 (6480-810-810)
 
 ## Quick Start
-- Install detectron2:
+- Install dependencies:
 ````python
-import torch
-TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
-CUDA_VERSION = torch.__version__.split("+")[-1]
-print("torch: ", TORCH_VERSION, "; cuda: ", CUDA_VERSION)
-!pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/$CUDA_VERSION/torch$TORCH_VERSION/index.html
+pip install -r requirements.txt
 ````
 Run `train.py DATA_DIR` to train and 
 `test.py DATA_DIR` to test.

@@ -1,0 +1,5 @@
+detectron2==0.6+cpu
+numpy==1.21.4
+opencv_python==4.5.4.60
+torch==1.10.0
+tqdm==4.62.3
