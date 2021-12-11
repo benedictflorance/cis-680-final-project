@@ -14,6 +14,7 @@
 - Scaled dataset can be found [here](https://drive.google.com/drive/folders/1Cus6rW-Rqy2a62qYSL3Pf0DBI4dheGt-?usp=sharing)
 - Groundtruth density maps can be found [here](https://drive.google.com/drive/folders/1sC1HYSp8ntKigpAHjMAZZxldXB9YedZT?usp=sharing)
 - Our trained model can be found at pretrained/
+- data folder can also be accessed [here](https://drive.google.com/drive/folders/1D6Dff_b54SLNxgpS8veooFUV5cxzcMqF?usp=sharing)
 
 ## Citation
 
