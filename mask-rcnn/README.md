@@ -17,7 +17,7 @@ print("torch: ", TORCH_VERSION, "; cuda: ", CUDA_VERSION)
 !pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/$CUDA_VERSION/torch$TORCH_VERSION/index.html
 ````
 Run `train.py DATA_DIR` to train and 
-`eval.py DATA_DIR` to test.
+`test.py DATA_DIR` to test.
 - Dataset can be found [here](https://drive.google.com/drive/folders/1OyWLO9ysCCZkGnQdwYhIKbU0ixk_73Zj?usp=sharing)
 - Our trained model can be found at pretrained/
 
