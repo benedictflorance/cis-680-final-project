@@ -11,9 +11,11 @@ from utils import MAPS, Scales, Transform,TransformTrain,extract_features, visua
 from PIL import Image
 import os
 import torch
+from matplotlib import pyplot as plt
 import argparse
 import json
 import numpy as np
+import cv2
 from tqdm import tqdm
 from os.path import exists,join
 import random
@@ -97,11 +99,25 @@ def train():
         sample = TransformTrain(sample)
         image, boxes,gt_density = sample['image'].cuda(), sample['boxes'].cuda(),sample['gt_density'].cuda()
 
+        #mask = cv2.imread("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
+
         mask = Image.open("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
-        mask.load()
-        mask = mask.convert("RGB")
+        #mask.load()
+        #print(mask.shape)
+
+        #mask = np.array(mask)[:,:,:3]
+        #mask = Image.fromarray(mask) #.convert('RGB')
+        #mask = Image.fromarray(np.uint8(mask)).convert('RGB')
         #print(mask)
 
+        #mask = mask.convert("RGB")
+        mask.save("rgb_mask.png" )
+
+        #print(np.array(mask))
+        #print(np.array(mask).shape)
+        #sys.exit(1)
+
+        #print(np.array(mask))
         m_sample = {'image': mask,'lines_boxes': rects, 'gt_density': density}
         m_sample = TransformTrain(m_sample)
         mask = m_sample['image']
@@ -121,6 +137,9 @@ def train():
             if new_count > 0: gt_density = gt_density * (orig_count / new_count)
 
 
+        #print(mask.shape, output.squeeze().shape)
+        #print(mask[:1,:,:].squeeze().shape)
+        #print(mask)
         neg_stroke_loss, _  = NegativeStrokeLoss(output.squeeze(), mask[:1,:,:].squeeze())
         print(neg_stroke_loss)
         loss = criterion(output, gt_density) + (args.weight_negativestroke * neg_stroke_loss)
