@@ -82,6 +82,13 @@ def PerturbationLoss(output,boxes,sigma=8, use_gpu=True):
         Loss += F.mse_loss(out.squeeze(),GaussKernel) 
     return Loss
 
+def NegativeStrokeLoss(output, mask_image):
+    output = output[:mask_image.shape[0], :mask_image.shape[1]]
+    output = output[mask_image>=1]
+    output = output[output>=0]
+    loss = torch.sum(output) 
+    return loss, loss!=0.
+
 
 def MincountLoss(output,boxes, use_gpu=True):
     ones = torch.ones(1)
