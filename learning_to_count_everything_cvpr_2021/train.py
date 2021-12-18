@@ -7,13 +7,15 @@ Date: 2021/04/19
 """
 import torch.nn as nn
 from model import  Resnet50FPN,CountRegressor,weights_normal_init
-from utils import MAPS, Scales, Transform,TransformTrain,extract_features, visualize_output_and_save
+from utils import MAPS, Scales, Transform,TransformTrain,extract_features, visualize_output_and_save, NegativeStrokeLoss
 from PIL import Image
 import os
 import torch
+from matplotlib import pyplot as plt
 import argparse
 import json
 import numpy as np
+import cv2
 from tqdm import tqdm
 from os.path import exists,join
 import random
@@ -29,13 +31,15 @@ parser.add_argument("-ep", "--epochs", type=int,default=100, help="number of tra
 parser.add_argument("-g", "--gpu", type=int,default=0, help="GPU id")
 parser.add_argument("-lr", "--learning-rate", type=float,default=1e-5, help="learning rate")
 parser.add_argument("-m",  "--model_path", type=str, default="pretrained/FamNet_Save1.pth", help="path to trained model")
+parser.add_argument("-wns", "--weight_negativestroke", type=float,default=1e-6, help="weight multiplier for Negative Stroke Loss")
 args = parser.parse_args()
 
 
 data_path = args.data_path
 anno_file = data_path + 'parts_new_annotations_scaled.json'
-data_split_file = data_path + 'dataset_split.json'
+data_split_file = data_path + 'dataset_split_angles.json'
 im_dir = 'parts_dataset_resized'
+mask_dir = 'masks'
 gt_dir = 'parts_gt_density_maps'
 
 if not exists(args.output_dir):
@@ -88,11 +92,27 @@ def train():
 
         image = Image.open('{}/{}'.format(im_dir, im_id))
         image.load()
+        #print(image)
         density_path = gt_dir + '/' + im_id.split(".png")[0] + ".npy"
         density = np.load(density_path).astype('float32')    
         sample = {'image':image,'lines_boxes':rects,'gt_density':density}
         sample = TransformTrain(sample)
         image, boxes,gt_density = sample['image'].cuda(), sample['boxes'].cuda(),sample['gt_density'].cuda()
+
+        #mask = cv2.imread("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
+
+        mask = Image.open("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
+        
+
+        #mask = mask.convert("RGB")
+        mask.save("rgb_mask.png" )
+
+        #print(mask)
+        mask  = np.array(mask) 
+        #Eprint(mask.shape)
+        mask = mask /  255
+        mask= np.moveaxis(mask, -1, 0)
+                
 
         with torch.no_grad():
             features = extract_features(resnet50_conv, image.unsqueeze(0), boxes.unsqueeze(0), MAPS, Scales)
@@ -106,7 +126,30 @@ def train():
             gt_density = F.interpolate(gt_density, size=(output.shape[2],output.shape[3]),mode='bilinear')
             new_count = gt_density.sum().detach().item()
             if new_count > 0: gt_density = gt_density * (orig_count / new_count)
-        loss = criterion(output, gt_density)
+
+
+        new_shape = torch.Size([output.shape[2], output.shape[3]])
+        mask_img_tensor = torch.from_numpy(mask[0])
+
+        mask_img_tensor = mask_img_tensor.unsqueeze(0)
+        mask_img_tensor = mask_img_tensor.unsqueeze(0)
+
+        temp_mask = F.interpolate(mask_img_tensor, size=new_shape, mode = 'bicubic')
+        mask_img_tensor = mask_img_tensor.squeeze(0)
+        mask_img_tensor = mask_img_tensor.squeeze(0)
+
+        
+        temp_mask = temp_mask.cuda()
+        #when mask is 1, sum over density values
+        #sum_error = 0
+        c = temp_mask*output
+        sum_error = torch.sum(c) #mismatch loss
+        lmask_error = (1e-)*sum_error
+        mse_loss = criterion(output, gt_density)
+
+        print(sum_error, mse_loss)
+        loss = mse_loss  + lmask_error
+
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
