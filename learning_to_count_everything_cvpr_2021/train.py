@@ -102,26 +102,17 @@ def train():
         #mask = cv2.imread("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
 
         mask = Image.open("{}/{}".format(mask_dir, im_id.replace("_img.png", "_img_mask.png")))
-        #mask.load()
-        #print(mask.shape)
-
-        #mask = np.array(mask)[:,:,:3]
-        #mask = Image.fromarray(mask) #.convert('RGB')
-        #mask = Image.fromarray(np.uint8(mask)).convert('RGB')
-        #print(mask)
+        
 
         #mask = mask.convert("RGB")
         mask.save("rgb_mask.png" )
 
-        #print(np.array(mask))
-        #print(np.array(mask).shape)
-        #sys.exit(1)
-
-        #print(np.array(mask))
-        m_sample = {'image': mask,'lines_boxes': rects, 'gt_density': density}
-        m_sample = TransformTrain(m_sample)
-        mask = m_sample['image']
         #print(mask)
+        mask  = np.array(mask) 
+        #Eprint(mask.shape)
+        mask = mask /  255
+        mask= np.moveaxis(mask, -1, 0)
+                
 
         with torch.no_grad():
             features = extract_features(resnet50_conv, image.unsqueeze(0), boxes.unsqueeze(0), MAPS, Scales)
@@ -137,12 +128,28 @@ def train():
             if new_count > 0: gt_density = gt_density * (orig_count / new_count)
 
 
-        #print(mask.shape, output.squeeze().shape)
-        #print(mask[:1,:,:].squeeze().shape)
-        #print(mask)
-        neg_stroke_loss, _  = NegativeStrokeLoss(output.squeeze(), mask[:1,:,:].squeeze())
-        print(neg_stroke_loss)
-        loss = criterion(output, gt_density) + (args.weight_negativestroke * neg_stroke_loss)
+        new_shape = torch.Size([output.shape[2], output.shape[3]])
+        mask_img_tensor = torch.from_numpy(mask[0])
+
+        mask_img_tensor = mask_img_tensor.unsqueeze(0)
+        mask_img_tensor = mask_img_tensor.unsqueeze(0)
+
+        temp_mask = F.interpolate(mask_img_tensor, size=new_shape, mode = 'bicubic')
+        mask_img_tensor = mask_img_tensor.squeeze(0)
+        mask_img_tensor = mask_img_tensor.squeeze(0)
+
+        
+        temp_mask = temp_mask.cuda()
+        #when mask is 1, sum over density values
+        #sum_error = 0
+        c = temp_mask*output
+        sum_error = torch.sum(c) #mismatch loss
+        lmask_error = (1e-)*sum_error
+        mse_loss = criterion(output, gt_density)
+
+        print(sum_error, mse_loss)
+        loss = mse_loss  + lmask_error
+
         loss.backward()
         optimizer.step()
         train_loss += loss.item()

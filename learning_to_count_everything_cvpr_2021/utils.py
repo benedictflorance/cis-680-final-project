@@ -82,27 +82,6 @@ def PerturbationLoss(output,boxes,sigma=8, use_gpu=True):
         Loss += F.mse_loss(out.squeeze(),GaussKernel) 
     return Loss
 
-def NegativeStrokeLoss(output, mask_image):
-    #Eoutput = output[:mask_image.shape[0], :mask_image.shape[1]]
-    '''
-    print(mask_image[mask_image<1].shape)
-    print(mask_image[mask_image>=1].shape)
-
-    print("size of output < 1", output[output<1].shape)
-    print("size of output == 0", output[output==0].shape)
-    print("size of output >= 1", output[output>=1].shape)
-    print(output.shape)
-    '''
-    output = output[mask_image>0] #pixels in the mask that are white
-    #print(output.shape)
-    #print(output)
-    output = output[output<=0] #pixels in the output that are black
-    #print(output.shape)
-    loss = torch.sum(output) 
-    #print(loss)
-    #sys.exit(1)
-    return loss, loss!=0.
-
 
 def MincountLoss(output,boxes, use_gpu=True):
     ones = torch.ones(1)
